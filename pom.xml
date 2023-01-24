@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.bonitasoft.connectors</groupId>
-    <artifactId>bonita-connector-document-templating</artifactId>
-    <version>2.3.0-SNAPSHOT</version>
+    <artifactId>bonita-connector-document-my-templating</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
 
-    <name>Office Document Templating Connector</name>
-    <description>Office document templating connector for Bonita</description>
+    <name>Office Document My Templating Connector</name>
+    <description>Office document my templating connector for Bonita</description>
     <url>https://www.bonitasoft.com</url>
 
     <developers>
@@ -29,48 +29,50 @@
         </license>
     </licenses>
 
-
     <properties>
-        <!-- Maven -->
+        <!-- Maven -->                
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyy.MM.dd-hh.mm</maven.build.timestamp.format>
 
         <!--Connector -->
-        <document-templating.def.id>document-templating</document-templating.def.id>
-        <document-templating.def.version>1.0.1</document-templating.def.version>
-        <document-templating.impl.id>${document-templating.def.id}-impl</document-templating.impl.id>
-        <document-templating.impl.version>${project.version}</document-templating.impl.version>
-        <document-templating.main-class>org.bonitasoft.connectors.document.templating.DocumentTemplating</document-templating.main-class>
+        <document-my-templating.def.id>document-my-templating</document-my-templating.def.id>
+        <document-my-templating.def.version>1.0.4</document-my-templating.def.version>
+        <document-my-templating.impl.id>${document-my-templating.def.id}-impl</document-my-templating.impl.id>
+        <document-my-templating.impl.version>${project.version}</document-my-templating.impl.version>
+        <document-my-templating.main-class>org.bonitasoft.connectors.document.templating.DocumentMyTemplating</document-my-templating.main-class>
 
-        <!-- Bonita -->
-        <bonita.engine.version>7.14.0</bonita.engine.version>
+        <!-- Bonita -->	
+        <bonita.engine.version>7.13.0</bonita.engine.version>
 
         <!-- Connector dependencies -->
-        <opensagres.version>2.0.4</opensagres.version>
+        <opensagres.version>2.0.2</opensagres.version>
         <velocity-tools-generic.version>1.4</velocity-tools-generic.version>
-        <commons-text.version>1.10.0</commons-text.version>
+        <commons-text.version>1.9</commons-text.version>
+        <commons-collections.version>3.2.2</commons-collections.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
 
         <!-- Test -->
-        <junit-jupiter-engine.version>5.9.1</junit-jupiter-engine.version>
+        <junit-jupiter-engine.version>5.8.1</junit-jupiter-engine.version>       
         <wiremock.version>2.26.3</wiremock.version>
-        <assertj-core.version>3.23.1</assertj-core.version>
-        <mockito-core.version>4.9.0</mockito-core.version>
-        <logback-classic.version>1.2.11</logback-classic.version>
-        <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
+        <assertj-core.version>3.21.0</assertj-core.version>
+        <mockito-core.version>3.3.3</mockito-core.version>
+        <logback-classic.version>1.2.10</logback-classic.version>
+        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <sonar-maven-plugin.version>3.9.1.2185</sonar-maven-plugin.version>
 
         <!-- Maven plugins -->
-        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-        <maven.compiler.release>${java.version}</maven.compiler.release>
-        <maven-assembly-plugin.version>3.4.2</maven-assembly-plugin.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
-        <groovy.version>3.0.13</groovy.version>
-        <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
-        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
-        <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
-        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <groovy.version>3.0.8</groovy.version> 
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.2.0</maven-source-plugin.version>
 
         <!-- Sonar -->
         <sonar.projectKey>bonitasoft_bonita-connector-document-templating</sonar.projectKey>
@@ -81,16 +83,16 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.apache.xmlbeans</groupId>
+                <artifactId>xmlbeans</artifactId>
+                <version>3.0.1</version>
+            </dependency>
+            <dependency>
                 <groupId>org.bonitasoft.runtime</groupId>
                 <artifactId>bonita-runtime-bom</artifactId>
                 <version>${bonita.engine.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -98,7 +100,7 @@
     <dependencies>
         <dependency>
             <groupId>org.bonitasoft.engine</groupId>
-            <artifactId>bonita-common</artifactId>
+            <artifactId>bonita-common</artifactId>            
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -134,8 +136,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>${commons-text.version}</version>
+            <artifactId>commons-text</artifactId>           
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
         </dependency>
         
         <dependency>
@@ -151,7 +156,7 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit-jupiter-engine.version}</version>
             <scope>test</scope>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -225,7 +230,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven-surefire-plugin.version}</version>
+                    <version>${maven-surefire-plugin.version}</version>                   
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -330,7 +335,7 @@
 
     <profiles>
         <!-- Deployment profile (required so these plugins are only used 
-            when deploying) -->
+        when deploying) -->
         <profile>
             <id>deploy</id>
             <build>
@@ -339,7 +344,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.0.1</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -349,7 +354,7 @@
                                 </goals>
                                 <configuration>
                                     <!-- Prevent `gpg` from using pinentry 
-                                        programs -->
+                                    programs -->
                                     <gpgArguments>
                                         <arg>--pinentry-mode</arg>
                                         <arg>loopback</arg>
@@ -381,6 +386,5 @@
         <url>https://github.com/bonitasoft/bonita-connector-document-templating.git</url>
         <tag>HEAD</tag>
     </scm>
-
 
 </project>

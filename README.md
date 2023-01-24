@@ -1,15 +1,17 @@
-# bonita-connector-document-templating
-![](https://github.com/bonitasoft/bonita-connector-document-templating/workflows/Build/badge.svg)
-[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=bonitasoft_bonita-connector-document-templating&metric=alert_status)](https://sonarcloud.io/dashboard?id=bonitasoft_bonita-connector-document-templating)
-[![GitHub release](https://img.shields.io/github/v/release/bonitasoft/bonita-connector-document-templating?color=blue&label=Release)](https://github.com/bonitasoft/bonita-connector-document-templating/releases)
-[![Maven Central](https://img.shields.io/maven-central/v/org.bonitasoft.connectors/bonita-connector-document-templating.svg?label=Maven%20Central&color=orange)](https://search.maven.org/search?q=g:%22org.bonitasoft.connectors%22%20AND%20a:%22bonita-connector-document-templating%22)
+# bonita-connector-document-my-templating
+
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-yellow.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
 Insert document properties inside .docx template
 
+## Prerequisites
+
+- Java 11
+- Maven 3
+
 ## Bonita compatibility
 
-[v2.1.0](https://github.com/bonitasoft/bonita-connector-document-templating/releases/2.1.0) is compatible with Bonita version 7.11.x and above
+Is compatible with Bonita version 2021.2 and above.
 
 ## Build
 
@@ -17,13 +19,17 @@ __Clone__ or __fork__ this repository, then at the root of the project run:
 
 `./mvnw`
 
+## Install
+
+Starting with Bonita 2021.2, the following command must be executed to install the .jar locally and then import it from Bonita Studio.
+
+`mvn clean install`
+
 ## Release
 
-In order to create a new release:
-- On the release branch, make sure to update the pom version (remove the -SNAPSHOT)
-- Run the action 'Create release', set the version to release as parameter
-- When the action is completed, do not forget to manage the release on the nexus (close and release)
-- Update the `master` with the next SNAPSHOT version.
+In order to create a new release push a `release-<version>` branch with the desired version in pom.xml.
+Update the `master` with the next SNAPSHOT version.
+
 
 ## How to design report
 

@@ -38,6 +38,12 @@ public class ZipUtil extends SimpleFileVisitor<Path> implements java.lang.AutoCl
     private FileOutputStream fos;
     private ZipOutputStream zos;
 
+    /**
+     * 
+     * @param source
+     * @param target
+     * @throws IOException 
+     */
     public static void zip(Path source, Path target) throws IOException {
         try (ZipUtil zippingVisitor = new ZipUtil(source, target)) {
             Files.walkFileTree(source, zippingVisitor);
@@ -50,6 +56,13 @@ public class ZipUtil extends SimpleFileVisitor<Path> implements java.lang.AutoCl
         zos = new ZipOutputStream(fos);
     }
 
+    /**
+     * 
+     * @param file
+     * @param attrs
+     * @return
+     * @throws IOException 
+     */
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         if (!file.toFile().exists()) {

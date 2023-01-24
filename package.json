@@ -1,4 +1,4 @@
 {
-  "name": "bonita-connector-document-templating",
-  "coment": "This json file is required by the generate-changelog-action, do not remove it."
+  "name": "bonita-connector-document-my-templating",
+  "version": "2.2.2-SNAPSHOT"
 }

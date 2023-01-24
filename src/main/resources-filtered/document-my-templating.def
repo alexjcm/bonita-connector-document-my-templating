@@ -2,11 +2,11 @@
 <definition:ConnectorDefinition xmlns:definition="http://www.bonitasoft.org/ns/connector/definition/6.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <id>${document-templating.def.id}</id>
-    <version>${document-templating.def.version}</version>
-    <icon>templating.png</icon>
+    <id>${document-my-templating.def.id}</id>
+    <version>${document-my-templating.def.version}</version>
+    <icon>my-templating.png</icon>
 
-	<category id="office" icon="office.png"/>
+	<category id="OfficeV2" icon="my-office.png"/>
 
     <input name="documentInput" type="java.lang.String" mandatory="true" />
     <input name="replacements" type="java.util.List" mandatory="true" />

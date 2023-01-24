@@ -57,26 +57,27 @@ import fr.opensagres.xdocreport.document.IXDocReport;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
+import fr.opensagres.xdocreport.template.formatter.FieldsMetadata;
+import fr.opensagres.xdocreport.core.document.SyntaxKind;
 
 /**
  * @author Baptiste Mesta
  */
-public class DocumentTemplating extends AbstractConnector {
+public class DocumentMyTemplating extends AbstractConnector {
 
-    private static final String TEMP_DOC = "connectorDocumentTemplatingTempDocument";
-    private static final String TEMP_DIR = "connectorDocumentTemplatingTempDirectory";
+    private static final String TEMP_DOC = "connectorDocTemplateTmpDoc";
+    private static final String TEMP_DIR = "connectorDocTemplateTmpDir";
     private static final String ODT_EXT = ".odt";
     private static final String DOCX_EXT = ".docx";
-
     public static final String INPUT_DOCUMENT_INPUT = "documentInput";
     public static final String INPUT_REPLACEMENTS = "replacements";
     public static final String INPUT_RESULTING_DOC_FILENAME = "outputFileName";
     public static final String OUTPUT_DOCUMENT = "document";
 
-    private Logger logger = Logger.getLogger(DocumentTemplating.class.getName());
+    private Logger logger = Logger.getLogger(DocumentMyTemplating.class.getName());
     private LookupTranslator lookupTranslator;
 
-    public DocumentTemplating() {
+    public DocumentMyTemplating() {
         Map<CharSequence, CharSequence> escapeXml10Map = new HashMap<>();
         escapeXml10Map.put("\u0000", StringUtils.EMPTY);
         escapeXml10Map.put("\u0001", StringUtils.EMPTY);
@@ -122,6 +123,7 @@ public class DocumentTemplating extends AbstractConnector {
             List<List<Object>> replacements = (List<List<Object>>) getInputParameter(INPUT_REPLACEMENTS);
 
             byte[] finalDocument = applyReplacements(content, replacements, isOdt);
+
             setOutputParameter(OUTPUT_DOCUMENT, createDocumentValue(document, outputFilename, finalDocument));
         } catch (final DocumentNotFoundException e) {
             throw new ConnectorException(e);
@@ -130,16 +132,27 @@ public class DocumentTemplating extends AbstractConnector {
 
     protected byte[] applyReplacements(byte[] content, List<List<Object>> inputParameter, boolean isOdt)
             throws ConnectorException {
-        try (ByteArrayInputStream is = new ByteArrayInputStream(content)) {
-            IXDocReport report = XDocReportRegistry.getRegistry().loadReport(is, TemplateEngineKind.Velocity);
+        // 1) Cargar el archivo Docx rellenando el motor de plantillas de Velocity y almacenarlo en caché del registro.
+        try (ByteArrayInputStream in = new ByteArrayInputStream(content)) {
+            IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Velocity);
+
+            // 2) Crear campos de metadatos para gestionar el estilo del texto.
+            FieldsMetadata metadata = report.createFieldsMetadata();
+            //metadata.addFieldAsTextStyling("comments_html", SyntaxKind.Html);
+
+            // 3) Crear el modelo de contexto Java.
             IContext context = report.createContext();
+
             context.put("sorter", new SortTool());
             for (List<Object> objects : inputParameter) {
                 if (objects != null && objects.size() > 1) {
-                    context.put(String.valueOf(objects.get(0)), objects.get(1));
+                    String nombre = String.valueOf(objects.get(0));
+                    metadata.addFieldAsTextStyling(nombre, SyntaxKind.Html);
+                    context.put(nombre, objects.get(1));
                 }
             }
 
+            // 4) Generar el informe fusionando el modelo Java con el Docx.
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
                 report.process(context, byteArrayOutputStream);
                 File resFile = sanitizeOutput(byteArrayOutputStream, isOdt);
@@ -154,8 +167,8 @@ public class DocumentTemplating extends AbstractConnector {
     }
 
     private File sanitizeOutput(ByteArrayOutputStream byteArrayOutputStream, boolean isOdt) throws IOException {
-        try (InputStream is = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-                ZipInputStream zis = new ZipInputStream(new BufferedInputStream(is));) {
+        try (InputStream in = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+                ZipInputStream zis = new ZipInputStream(new BufferedInputStream(in));) {
             Path targetDir = ZipUtil.unzip(TEMP_DIR, zis);
             Path documentPath = retrieveDocumentPath(isOdt, targetDir);
             if (isCorrupted(documentPath) && logger.isLoggable(Level.WARNING)) {
@@ -172,7 +185,7 @@ public class DocumentTemplating extends AbstractConnector {
 
     protected boolean isCorrupted(Path filePath) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath.toFile()))) {
-         // Explicitly use Buffer instead of CharBuffer for java 8 runtime compatibility
+            // Explicitly use Buffer instead of CharBuffer for java 8 runtime compatibility
             // See https://stackoverflow.com/questions/61267495/exception-in-thread-main-java-lang-nosuchmethoderror-java-nio-bytebuffer-flip
             Buffer buffer = CharBuffer.allocate(ZipUtil.BUFFER_SIZE);
             while (reader.read((CharBuffer) buffer) != -1) {
@@ -199,7 +212,7 @@ public class DocumentTemplating extends AbstractConnector {
         Files.copy(filePathToSanitize, tempFile, StandardCopyOption.REPLACE_EXISTING);
         try (BufferedReader reader = new BufferedReader(new FileReader(tempFile.toFile()));
                 FileWriter writer = new FileWriter(fileToSanitize)) {
-            // Explicitly use Buffer instead of CharBuffer for java 8 runtime compatibility
+            //  Usar explícitamente Buffer en lugar de CharBuffer para la compatibilidad con java 8
             // See https://stackoverflow.com/questions/61267495/exception-in-thread-main-java-lang-nosuchmethoderror-java-nio-bytebuffer-flip
             Buffer buffer = CharBuffer.allocate(ZipUtil.BUFFER_SIZE);
             while (reader.read((CharBuffer) buffer) != -1) {
@@ -215,13 +228,19 @@ public class DocumentTemplating extends AbstractConnector {
                 outputFilename != null ? outputFilename : document.getContentFileName());
     }
 
+    /**
+     * Validar los parámetros de entrada, (la extensión del documento)
+     *
+     * @throws ConnectorValidationException
+     */
     @Override
     public void validateInputParameters() throws ConnectorValidationException {
         try {
+            // Recuperar el documento
             Document document = retrieveDocument();
             if (!(document.getContentFileName().endsWith(DOCX_EXT) || document.getContentFileName().endsWith(ODT_EXT))) {
                 throw new ConnectorValidationException(
-                        "The template must be a .docx or a .odt document, other formats are not supported.");
+                        "La plantilla debe ser un documento .docx o .odt, no se admiten otros formatos.");
             }
         } catch (DocumentNotFoundException e) {
             throw new ConnectorValidationException(e.getMessage());

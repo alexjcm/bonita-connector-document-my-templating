@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<implementation:connectorImplementation xmlns:implementation="http://www.bonitasoft.org/ns/connector/implementation/6.0">
+
+    <definitionId>${document-my-templating.def.id}</definitionId>
+    <definitionVersion>${document-my-templating.def.version}</definitionVersion>
+    <description>Document my templating implementation</description>
+    <implementationClassname>${document-my-templating.main-class}</implementationClassname>
+    <implementationId>${document-my-templating.impl.id}</implementationId>
+    <implementationVersion>${document-my-templating.impl.version}</implementationVersion>
+
+<!-- retrieved from the pom.xml at build time -->
+${connector-dependencies}
+
+</implementation:connectorImplementation>

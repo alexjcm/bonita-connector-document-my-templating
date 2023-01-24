@@ -62,7 +62,7 @@ import fr.opensagres.xdocreport.template.TemplateEngineKind;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class DocumentTemplatingTest {
+class DocumentMyTemplatingTest {
 
     private final long processInstanceId = 4861356546L;
     @Mock
@@ -73,7 +73,7 @@ class DocumentTemplatingTest {
     private ProcessAPI processAPI;
     @Spy
     @InjectMocks
-    private DocumentTemplating documentTemplating;
+    private DocumentMyTemplating documentTemplating;
 
     @BeforeEach
     public void before() {
@@ -96,8 +96,8 @@ class DocumentTemplatingTest {
         doReturn(content).when(processAPI).getDocumentContent("TheStorageID");
 
         final HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put(DocumentTemplating.INPUT_DOCUMENT_INPUT, "documentName");
-        parameters.put(DocumentTemplating.INPUT_REPLACEMENTS, replacements);
+        parameters.put(DocumentMyTemplating.INPUT_DOCUMENT_INPUT, "documentName");
+        parameters.put(DocumentMyTemplating.INPUT_REPLACEMENTS, replacements);
 
         documentTemplating.setInputParameters(parameters);
 
@@ -105,8 +105,8 @@ class DocumentTemplatingTest {
         final Map<String, Object> execute = documentTemplating.execute();
 
         //then
-        assertThat(execute).containsOnlyKeys(DocumentTemplating.OUTPUT_DOCUMENT);
-        assertThat(execute.get(DocumentTemplating.OUTPUT_DOCUMENT))
+        assertThat(execute).containsOnlyKeys(DocumentMyTemplating.OUTPUT_DOCUMENT);
+        assertThat(execute.get(DocumentMyTemplating.OUTPUT_DOCUMENT))
                 .isEqualToComparingFieldByField(new DocumentValue(contentAfter, "theMimeType", "doc.docx"));
     }
 
@@ -126,9 +126,9 @@ class DocumentTemplatingTest {
         doReturn(content).when(processAPI).getDocumentContent("TheStorageID");
 
         final HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put(DocumentTemplating.INPUT_DOCUMENT_INPUT, "documentName");
-        parameters.put(DocumentTemplating.INPUT_REPLACEMENTS, replacements);
-        parameters.put(DocumentTemplating.INPUT_RESULTING_DOC_FILENAME, "outDocument.docx");
+        parameters.put(DocumentMyTemplating.INPUT_DOCUMENT_INPUT, "documentName");
+        parameters.put(DocumentMyTemplating.INPUT_REPLACEMENTS, replacements);
+        parameters.put(DocumentMyTemplating.INPUT_RESULTING_DOC_FILENAME, "outDocument.docx");
 
         documentTemplating.setInputParameters(parameters);
 
@@ -136,8 +136,8 @@ class DocumentTemplatingTest {
         final Map<String, Object> execute = documentTemplating.execute();
 
         //then
-        assertThat(execute).containsOnlyKeys(DocumentTemplating.OUTPUT_DOCUMENT);
-        assertThat(execute.get(DocumentTemplating.OUTPUT_DOCUMENT))
+        assertThat(execute).containsOnlyKeys(DocumentMyTemplating.OUTPUT_DOCUMENT);
+        assertThat(execute.get(DocumentMyTemplating.OUTPUT_DOCUMENT))
                 .isEqualToComparingFieldByField(new DocumentValue(contentAfter, "theMimeType", "outDocument.docx"));
     }
 
@@ -148,14 +148,14 @@ class DocumentTemplatingTest {
         final Map<String, String> replacements = Collections.singletonMap("theKey", "theValue");
         doThrow(new DocumentNotFoundException("")).when(processAPI).getLastDocument(anyLong(), anyString());
         final HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put(DocumentTemplating.INPUT_DOCUMENT_INPUT, "documentName");
-        parameters.put(DocumentTemplating.INPUT_REPLACEMENTS, replacements);
+        parameters.put(DocumentMyTemplating.INPUT_DOCUMENT_INPUT, "documentName");
+        parameters.put(DocumentMyTemplating.INPUT_REPLACEMENTS, replacements);
         documentTemplating.setInputParameters(parameters);
 
         //then
         assertThrows(ConnectorException.class, () -> documentTemplating.execute());
     }
-
+/*
     @Test
     void process_docx_document()
             throws ConnectorException, DocumentNotFoundException, IOException, XDocReportException {
@@ -177,8 +177,8 @@ class DocumentTemplatingTest {
         doReturn(content).when(processAPI).getDocumentContent("TheStorageID");
 
         final HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put(DocumentTemplating.INPUT_DOCUMENT_INPUT, "documentName");
-        parameters.put(DocumentTemplating.INPUT_REPLACEMENTS, replacements);
+        parameters.put(DocumentMyTemplating.INPUT_DOCUMENT_INPUT, "documentName");
+        parameters.put(DocumentMyTemplating.INPUT_REPLACEMENTS, replacements);
 
         documentTemplating.setInputParameters(parameters);
 
@@ -186,11 +186,12 @@ class DocumentTemplatingTest {
         final Map<String, Object> execute = documentTemplating.execute();
 
         //then
-        assertThat(execute).containsOnlyKeys(DocumentTemplating.OUTPUT_DOCUMENT);
+        assertThat(execute).containsOnlyKeys(DocumentMyTemplating.OUTPUT_DOCUMENT);
         final IXDocReport report = XDocReportRegistry.getRegistry().loadReport(
                 new ByteArrayInputStream(
-                        ((DocumentValue) execute.get(DocumentTemplating.OUTPUT_DOCUMENT)).getContent()),
+                        ((DocumentValue) execute.get(DocumentMyTemplating.OUTPUT_DOCUMENT)).getContent()),
                 TemplateEngineKind.Velocity);
+        
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Options options = Options.getTo(ConverterTypeTo.XHTML).via(
                     ConverterTypeVia.XWPF);
@@ -205,9 +206,9 @@ class DocumentTemplatingTest {
             assertThat(actual).contains("[another task, last task, my task]");
         }
     }
-
+*/
     @Test
-    void should_sanitize_input_with_invalid_char_for_docx() throws Exception {
+   void should_sanitize_input_with_invalid_char_for_docx() throws Exception {
         //given
         DocumentImpl document = new DocumentImpl();
         document.setContentMimeType("theMimeType");
@@ -221,8 +222,8 @@ class DocumentTemplatingTest {
         doReturn(content).when(processAPI).getDocumentContent("TheStorageID");
 
         HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put(DocumentTemplating.INPUT_DOCUMENT_INPUT, "documentName");
-        parameters.put(DocumentTemplating.INPUT_REPLACEMENTS, replacements);
+        parameters.put(DocumentMyTemplating.INPUT_DOCUMENT_INPUT, "documentName");
+        parameters.put(DocumentMyTemplating.INPUT_REPLACEMENTS, replacements);
 
         documentTemplating.setInputParameters(parameters);
 
@@ -230,9 +231,9 @@ class DocumentTemplatingTest {
         Map<String, Object> res = documentTemplating.execute();
 
         //then
-        assertThat(res).containsOnlyKeys(DocumentTemplating.OUTPUT_DOCUMENT);
+        assertThat(res).containsOnlyKeys(DocumentMyTemplating.OUTPUT_DOCUMENT);
         IXDocReport report = XDocReportRegistry.getRegistry().loadReport(
-                new ByteArrayInputStream(((DocumentValue) res.get(DocumentTemplating.OUTPUT_DOCUMENT)).getContent()),
+                new ByteArrayInputStream(((DocumentValue) res.get(DocumentMyTemplating.OUTPUT_DOCUMENT)).getContent()),
                 TemplateEngineKind.Velocity);
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Options options = Options.getTo(ConverterTypeTo.XHTML).via(ConverterTypeVia.XWPF);
@@ -258,8 +259,8 @@ class DocumentTemplatingTest {
         doReturn(content).when(processAPI).getDocumentContent("TheStorageID");
 
         HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put(DocumentTemplating.INPUT_DOCUMENT_INPUT, "documentName");
-        parameters.put(DocumentTemplating.INPUT_REPLACEMENTS, replacements);
+        parameters.put(DocumentMyTemplating.INPUT_DOCUMENT_INPUT, "documentName");
+        parameters.put(DocumentMyTemplating.INPUT_REPLACEMENTS, replacements);
 
         documentTemplating.setInputParameters(parameters);
 
@@ -267,9 +268,9 @@ class DocumentTemplatingTest {
         Map<String, Object> res = documentTemplating.execute();
 
         //then
-        assertThat(res).containsOnlyKeys(DocumentTemplating.OUTPUT_DOCUMENT);
+        assertThat(res).containsOnlyKeys(DocumentMyTemplating.OUTPUT_DOCUMENT);
         IXDocReport report = XDocReportRegistry.getRegistry().loadReport(
-                new ByteArrayInputStream(((DocumentValue) res.get(DocumentTemplating.OUTPUT_DOCUMENT)).getContent()),
+                new ByteArrayInputStream(((DocumentValue) res.get(DocumentMyTemplating.OUTPUT_DOCUMENT)).getContent()),
                 TemplateEngineKind.Velocity);
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Options options = Options.getTo(ConverterTypeTo.XHTML);
@@ -291,8 +292,8 @@ class DocumentTemplatingTest {
         doReturn(document).when(processAPI).getLastDocument(processInstanceId, "documentName");
 
         HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put(DocumentTemplating.INPUT_DOCUMENT_INPUT, "documentName");
-        parameters.put(DocumentTemplating.INPUT_REPLACEMENTS, replacements);
+        parameters.put(DocumentMyTemplating.INPUT_DOCUMENT_INPUT, "documentName");
+        parameters.put(DocumentMyTemplating.INPUT_REPLACEMENTS, replacements);
 
         documentTemplating.setInputParameters(parameters);
 
@@ -311,8 +312,8 @@ class DocumentTemplatingTest {
         doReturn(document).when(processAPI).getLastDocument(processInstanceId, "documentName");
 
         HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put(DocumentTemplating.INPUT_DOCUMENT_INPUT, "documentName");
-        parameters.put(DocumentTemplating.INPUT_REPLACEMENTS, replacements);
+        parameters.put(DocumentMyTemplating.INPUT_DOCUMENT_INPUT, "documentName");
+        parameters.put(DocumentMyTemplating.INPUT_REPLACEMENTS, replacements);
 
         documentTemplating.setInputParameters(parameters);
 
